@@ -2,6 +2,8 @@
 
 [简体中文](README.zh.md)
 
+**Repository:** [github.com/mxz2023/MyWikiTools](https://github.com/mxz2023/MyWikiTools)
+
 CLI for [Garmin Connect Personal API](https://developer.garmin.com/gc-developer-program/personal/personal-api): **multi-profile API keys**, **China-default host** (`personal.connectapi.garmin.cn`), and **`--json-output`** for agents.
 
 | Entry | Command |
@@ -22,20 +24,30 @@ CLI for [Garmin Connect Personal API](https://developer.garmin.com/gc-developer-
 
    Then **open a new terminal** (or `source ~/.zshrc`) so `pipx` is on your `PATH`.
 
-2. Install this project:
+2. Install (pick one):
+
+   **Helper script** (after pipx, prints key + `profile add` steps):
 
    ```bash
-   pipx install "git+https://github.com/<owner>/<repo>.git@main"
+   git clone https://github.com/mxz2023/MyWikiTools.git && cd MyWikiTools
+   ./scripts/install.sh
    ```
 
-   Or clone and install from the repo root:
+   Or pipx only (**pipx does not run our onboarding**; then run):
 
    ```bash
-   git clone https://github.com/<owner>/<repo>.git && cd <repo>
+   pipx install "git+https://github.com/mxz2023/MyWikiTools.git@master"
+   gmp setup
+   ```
+
+   From a clone:
+
+   ```bash
+   git clone https://github.com/mxz2023/MyWikiTools.git && cd MyWikiTools
    pipx install .
    ```
 
-3. Add your [Personal API key](https://connect.garmin.com/app/settings/personalApiToken):
+3. If you did not use `install.sh`, add your [Personal API key](https://connect.garmin.com/app/settings/personalApiToken):
 
    ```bash
    gmp profile add default --default "<your-api-key>"
@@ -62,7 +74,7 @@ Same as [Quick start](#quick-start). Prefer **`python3 -m pip install --user pip
 ### Editable install (development)
 
 ```bash
-git clone https://github.com/<owner>/<repo>.git && cd <repo>
+git clone https://github.com/mxz2023/MyWikiTools.git && cd MyWikiTools
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 gmp --help
@@ -155,17 +167,18 @@ See also **`gmp COMMAND --help`** and [Swagger](https://developer.garmin.com/gc-
 
 ## Agent Skill (Cursor & others)
 
-Canonical: [`skills/garmin-personal-cli/SKILL.md`](skills/garmin-personal-cli/SKILL.md) (symlinked under `.cursor/skills/` for Cursor).
+Canonical: [`skills/garmin-personal-cli/SKILL.md`](skills/garmin-personal-cli/SKILL.md) only (one skill directory, one `SKILL.md`; symlinked under `.cursor/skills/` for Cursor).
 
 **Open skills CLI** (needs Node):
 
 ```bash
-npx skills add <owner>/<repo>@garmin-personal-cli -g -y
+npx skills add mxz2023/MyWikiTools@garmin-personal-cli -g -y
 ```
 
 Confirm `@…` with `npx skills add --help` and [skills.sh](https://skills.sh/) after you publish.
 
-**Other agents (Codex, Pi, Workbuddy, …):** point “knowledge” / instructions at that `SKILL.md` or its GitHub raw URL.
+**Other agents (Codex, Pi, Workbuddy, …):** point “knowledge” / instructions at that `SKILL.md` or the raw URL  
+`https://raw.githubusercontent.com/mxz2023/MyWikiTools/master/skills/garmin-personal-cli/SKILL.md`.
 
 ## Compliance
 

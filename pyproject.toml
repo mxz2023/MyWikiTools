@@ -23,6 +23,9 @@ dev = [
   "respx>=0.21.0",
 ]
 
+[project.urls]
+Repository = "https://github.com/mxz2023/MyWikiTools"
+
 [project.scripts]
 garmin-personal = "garmin_personal.cli:app"
 gmp = "garmin_personal.cli:app"

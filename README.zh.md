@@ -2,6 +2,8 @@
 
 [English](README.md)
 
+**仓库：** [github.com/mxz2023/MyWikiTools](https://github.com/mxz2023/MyWikiTools)
+
 [Garmin Connect Personal API](https://developer.garmin.com/gc-developer-program/personal/personal-api) 的命令行客户端：支持**多配置档 API Key**、**默认中国区**（`personal.connectapi.garmin.cn`）、以及便于 Agent 解析的 **`--json-output`**。
 
 | 短命令 | 长命令 |
@@ -21,20 +23,30 @@
 
    执行 **`pipx ensurepath`** 后请 **新开一个终端**（或 `source ~/.zshrc`），保证 `PATH` 中有 `~/.local/bin`。
 
-2. 安装本工具：
+2. 安装本工具（任选其一）：
+
+   **一键脚本**（安装结束后会提示申请 Key 与配置命令）：
 
    ```bash
-   pipx install "git+https://github.com/<owner>/<repo>.git@main"
+   git clone https://github.com/mxz2023/MyWikiTools.git && cd MyWikiTools
+   ./scripts/install.sh
    ```
 
-   或先克隆再从仓库根安装：
+   或仅 pipx（**pipx 不会自动弹出引导**，装完后请执行 `gmp setup`）：
 
    ```bash
-   git clone https://github.com/<owner>/<repo>.git && cd <repo>
+   pipx install "git+https://github.com/mxz2023/MyWikiTools.git@master"
+   gmp setup
+   ```
+
+   克隆后本地安装：
+
+   ```bash
+   git clone https://github.com/mxz2023/MyWikiTools.git && cd MyWikiTools
    pipx install .
    ```
 
-3. 在浏览器中创建 [个人 API 密钥](https://connect.garmin.com/app/settings/personalApiToken)，并写入配置档：
+3. 若未用 `install.sh`，在浏览器中创建 [个人 API 密钥](https://connect.garmin.com/app/settings/personalApiToken)，并写入配置档：
 
    ```bash
    gmp profile add default --default "<你的-api-key>"
@@ -61,7 +73,7 @@
 ### 开发：可编辑安装
 
 ```bash
-git clone https://github.com/<owner>/<repo>.git && cd <repo>
+git clone https://github.com/mxz2023/MyWikiTools.git && cd MyWikiTools
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 gmp --help
@@ -154,17 +166,18 @@ gmp request GET '/userprofile-service/userprofile/settings' --json-output
 
 ## Agent Skill（Cursor 等）
 
-规范文档：[`skills/garmin-personal-cli/SKILL.md`](skills/garmin-personal-cli/SKILL.md)（Cursor 下 `.cursor/skills/` 为符号链接）。
+规范文档：[`skills/garmin-personal-cli/SKILL.md`](skills/garmin-personal-cli/SKILL.md)（目录内仅含 `SKILL.md`，符合常见 Agent Skill 最小结构；Cursor 下 `.cursor/skills/` 为符号链接）。
 
 **Open skills**（需安装 Node）：
 
 ```bash
-npx skills add <owner>/<repo>@garmin-personal-cli -g -y
+npx skills add mxz2023/MyWikiTools@garmin-personal-cli -g -y
 ```
 
 `@` 后子路径以发布后的仓库与 `npx skills add --help`、[skills.sh](https://skills.sh/) 为准。
 
-**其他 Agent**：在知识库/说明中引用该 `SKILL.md` 或 GitHub raw 链接。
+**其他 Agent**：在知识库/说明中引用该 `SKILL.md` 或 raw 链接  
+`https://raw.githubusercontent.com/mxz2023/MyWikiTools/master/skills/garmin-personal-cli/SKILL.md`。
 
 ## 合规说明
 
