@@ -82,6 +82,16 @@ pip install -e ".[dev]"
 gmp --help
 ```
 
+After adding or changing CLI commands, regenerate the Agent skill catalog:
+
+```bash
+python scripts/generate_skill_reference.py
+```
+
+(Writes `../../skills/garmin-personal-cli/reference.md`.)
+
+After editing `RESP_VERIFIED` in that script, re-run it only after spot-checking with real `gmp ... --json-output` against your account.
+
 ### Verify
 
 ```bash
@@ -169,7 +179,7 @@ See also **`gmp COMMAND --help`** and [Swagger](https://developer.garmin.com/gc-
 
 ## Agent Skill (Cursor & others)
 
-Canonical: [`skills/garmin-personal-cli/SKILL.md`](skills/garmin-personal-cli/SKILL.md) only (one skill directory, one `SKILL.md`; symlinked under `.cursor/skills/` for Cursor).
+Canonical: [`skills/garmin-personal-cli/SKILL.md`](../../skills/garmin-personal-cli/SKILL.md) + generated [`reference.md`](../../skills/garmin-personal-cli/reference.md) (symlinked under `.cursor/skills/` for Cursor).
 
 **Open skills CLI** (needs Node):
 

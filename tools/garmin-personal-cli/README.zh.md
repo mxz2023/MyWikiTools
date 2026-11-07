@@ -81,6 +81,14 @@ pip install -e ".[dev]"
 gmp --help
 ```
 
+新增或修改 CLI 子命令后，请重新生成 Agent 用命令目录：
+
+```bash
+python scripts/generate_skill_reference.py
+```
+
+（输出到 `../../skills/garmin-personal-cli/reference.md`。）
+
 ### 安装结果检查
 
 ```bash
@@ -168,7 +176,7 @@ gmp request GET '/userprofile-service/userprofile/settings' --json-output
 
 ## Agent Skill（Cursor 等）
 
-规范文档：[`skills/garmin-personal-cli/SKILL.md`](skills/garmin-personal-cli/SKILL.md)（目录内仅含 `SKILL.md`，符合常见 Agent Skill 最小结构；Cursor 下 `.cursor/skills/` 为符号链接）。
+规范文档：[`skills/garmin-personal-cli/SKILL.md`](../../skills/garmin-personal-cli/SKILL.md) 与生成的 [`reference.md`](../../skills/garmin-personal-cli/reference.md)（Cursor 下 `.cursor/skills/` 为符号链接）。
 
 **Open skills**（需安装 Node）：
 
