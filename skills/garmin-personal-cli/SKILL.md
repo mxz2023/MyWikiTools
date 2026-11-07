@@ -30,6 +30,13 @@ description: >-
    ./scripts/install.sh
    ```
 
+   Remote pipx (monorepo subdirectory):
+
+   ```bash
+   pipx install "git+https://github.com/mxz2023/MyWikiTools.git@master#subdirectory=tools/garmin-personal-cli"
+   gmp setup
+   ```
+
    After `pipx install` alone, users must run **`gmp setup`** (same text as `install.sh` prints). Then `gmp profile add default --default "<key>"`.
 
 2. **Skill / knowledge** (optional): import this file or the whole repo’s `skills/garmin-personal-cli/`.
