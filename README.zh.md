@@ -11,7 +11,7 @@
 | 工具 | 命令 | 目录 | 文档 |
 |------|------|------|------|
 | Garmin Personal API | `gmp`、`garmin-personal` | [`tools/garmin-personal-cli/`](tools/garmin-personal-cli/) | [README](tools/garmin-personal-cli/README.zh.md) |
-| *（在此追加新工具）* | | `tools/<name>/` | |
+| Apple 健康 / 手表 | `ahp`、`apple-health` | [`tools/apple-health-cli/`](tools/apple-health-cli/) | [README](tools/apple-health-cli/README.zh.md) |
 
 **安装 Garmin CLI**（已克隆仓库）：
 

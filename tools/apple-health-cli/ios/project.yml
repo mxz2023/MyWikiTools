@@ -1,0 +1,28 @@
+name: AHPSync
+options:
+  bundleIdPrefix: com.mywikitools
+  deploymentTarget:
+    iOS: "16.0"
+  xcodeVersion: "15.0"
+settings:
+  SWIFT_VERSION: "5.9"
+targets:
+  AHPSync:
+    type: application
+    platform: iOS
+    sources:
+      - path: AHPSync/AHPSync
+        excludes:
+          - "Info.plist"
+    info:
+      path: AHPSync/AHPSync/Info.plist
+    entitlements:
+      path: AHPSync/AHPSync/AHPSync.entitlements
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.mywikitools.ahpsync
+      TARGETED_DEVICE_FAMILY: "1"
+      CODE_SIGN_STYLE: Automatic
+      DEVELOPMENT_TEAM: ""
+      ENABLE_BITCODE: NO
+    scheme:
+      testTargets: []
