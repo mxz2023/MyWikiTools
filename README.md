@@ -12,6 +12,7 @@ Monorepo of small **CLI tools** (each installable with **pipx**). Agent **Skills
 |------|----------|-----------|------|
 | Garmin Personal API | `gmp`, `garmin-personal` | [`tools/garmin-personal-cli/`](tools/garmin-personal-cli/) | [README](tools/garmin-personal-cli/README.md) |
 | Apple Health / Watch | `ahp`, `apple-health` | [`tools/apple-health-cli/`](tools/apple-health-cli/) | [README](tools/apple-health-cli/README.md) |
+| Xiaomi Mi Fitness | `mfp`, `mi-fitness` | [`tools/mi-fitness-cli/`](tools/mi-fitness-cli/) | [README](tools/mi-fitness-cli/README.md) |
 
 **Install Garmin CLI** (from a clone):
 
