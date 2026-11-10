@@ -23,6 +23,8 @@
 | `weight --full` | Include body composition JSON |
 | `request PATH --data '{}'` | Debug signed API call |
 
+For a date-bounded weight query, use `mfp weight --start YYYY-MM-DD --end YYYY-MM-DD --full --json-output`; `items` are ordered newest measurement first and include `measured_at` and `weight_kg`. Use explicit dates when the requested window follows a timezone other than the host's local date.
+
 ## Sync `--type` values
 
 - `daily_activity` — steps, distance
