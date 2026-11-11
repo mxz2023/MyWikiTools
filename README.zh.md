@@ -13,6 +13,7 @@
 | Garmin Personal API | `gmp`、`garmin-personal` | [`tools/garmin-personal-cli/`](tools/garmin-personal-cli/) | [README](tools/garmin-personal-cli/README.zh.md) |
 | Apple 健康 / 手表 | `ahp`、`apple-health` | [`tools/apple-health-cli/`](tools/apple-health-cli/) | [README](tools/apple-health-cli/README.zh.md) |
 | 小米运动健康 | `mfp`、`mi-fitness` | [`tools/mi-fitness-cli/`](tools/mi-fitness-cli/) | [README](tools/mi-fitness-cli/README.zh.md) |
+| 汽车尾号限行 | `vehicle-restriction` | [`tools/vehicle-restriction-cli/`](tools/vehicle-restriction-cli/) | [README](tools/vehicle-restriction-cli/README.md) |
 
 **安装 Garmin CLI**（已克隆仓库）：
 
