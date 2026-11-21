@@ -1,0 +1,16 @@
+{
+  "schema": "2.0",
+  "config": { "wide_screen_mode": true },
+  "header": {
+    "template": "{{ header_template }}",
+    "title": { "tag": "plain_text", "content": "{{ title }}" }
+  },
+  "body": {
+    "elements": [
+      {
+        "tag": "markdown",
+        "content": "**{{ summary }}**{% if fields %}\n\n{% for f in fields %}- **{{ f.label }}**：{{ f.value }}\n{% endfor %}{% endif %}{% if body_md and body_md|length <= 2000 %}\n\n{{ body_md }}{% elif body_md %}\n\n（完整正文将以附件发送。）{% endif %}"
+      }
+    ]
+  }
+}

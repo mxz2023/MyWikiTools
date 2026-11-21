@@ -1,0 +1,16 @@
+id: notify.plain
+version: "1.0"
+description: "通用纯通知"
+header_template: blue
+default_format: card
+default_identity: auto
+required_fields:
+  - summary
+optional_fields:
+  - status
+  - fields
+  - body_md
+  - actions
+  - artifacts
+text_template: shared/text.standard.md.j2
+card_template: shared/card.plain.json.j2

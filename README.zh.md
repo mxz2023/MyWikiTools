@@ -14,6 +14,8 @@
 | Apple 健康 / 手表 | `ahp`、`apple-health` | [`tools/apple-health-cli/`](tools/apple-health-cli/) | [README](tools/apple-health-cli/README.zh.md) |
 | 小米运动健康 | `mfp`、`mi-fitness` | [`tools/mi-fitness-cli/`](tools/mi-fitness-cli/) | [README](tools/mi-fitness-cli/README.zh.md) |
 | 汽车尾号限行 | `vehicle-restriction` | [`tools/vehicle-restriction-cli/`](tools/vehicle-restriction-cli/) | [README](tools/vehicle-restriction-cli/README.md) |
+| iOS App 数据同步（iCTRL） | `ias`、`ictrl-app-sync` | [`tools/ictrl-app-sync/`](tools/ictrl-app-sync/) | [README](tools/ictrl-app-sync/README.zh.md) |
+| Agent 飞书出站（FNP） | `fnotify`、`feishu-notify` | [`tools/feishu-notify-cli/`](tools/feishu-notify-cli/) | [README](tools/feishu-notify-cli/README.zh.md) |
 
 **安装 Garmin CLI**（已克隆仓库）：
 

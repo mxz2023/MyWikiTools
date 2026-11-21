@@ -1,0 +1,17 @@
+id: agent.artifact_ready
+version: "1.0"
+description: "产出物已就绪"
+header_template: violet
+default_format: card
+default_identity: bot
+required_fields:
+  - title
+  - summary
+optional_fields:
+  - status
+  - fields
+  - body_md
+  - actions
+  - artifacts
+text_template: shared/text.standard.md.j2
+card_template: shared/card.standard.json.j2

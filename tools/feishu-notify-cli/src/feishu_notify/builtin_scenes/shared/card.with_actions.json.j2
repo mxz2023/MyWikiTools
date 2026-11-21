@@ -1,0 +1,51 @@
+{
+  "schema": "2.0",
+  "config": { "wide_screen_mode": true },
+  "header": {
+    "template": "{{ header_template }}",
+    "title": { "tag": "plain_text", "content": "{{ title }}" }
+  },
+  "body": {
+    "elements": [
+      {
+        "tag": "markdown",
+        "content": "**{{ summary }}**{% if fields %}\n\n{% for f in fields %}- **{{ f.label }}**：{{ f.value }}\n{% endfor %}{% endif %}"
+      },
+      {
+        "tag": "column_set",
+        "flex_mode": "none",
+        "horizontal_spacing": "default",
+        "columns": [
+          {% for a in actions %}
+          {
+            "tag": "column",
+            "width": "auto",
+            "vertical_align": "center",
+            "elements": [
+              {
+                "tag": "button",
+                "text": { "tag": "plain_text", "content": "{{ a.label }}" },
+                "type": "{{ 'primary' if loop.index0 == 0 and a.kind != 'url' else 'default' }}"
+                {% if a.kind == 'url' %},
+                "behaviors": [{
+                  "type": "open_url",
+                  "default_url": "{{ a.href }}",
+                  "pc_url": "",
+                  "ios_url": "",
+                  "android_url": ""
+                }]
+                {% else %},
+                "behaviors": [{
+                  "type": "callback",
+                  "value": {{ a.value | tojson }}
+                }]
+                {% endif %}
+              }
+            ]
+          }{% if not loop.last %},{% endif %}
+          {% endfor %}
+        ]
+      }
+    ]
+  }
+}

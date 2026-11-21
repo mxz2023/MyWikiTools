@@ -1,0 +1,17 @@
+id: agent.conclusion
+version: "1.0"
+description: "任务成功结束"
+header_template: green
+default_format: card
+default_identity: bot
+required_fields:
+  - title
+  - summary
+optional_fields:
+  - status
+  - fields
+  - body_md
+  - actions
+  - artifacts
+text_template: shared/text.standard.md.j2
+card_template: shared/card.standard.json.j2

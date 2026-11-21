@@ -1,0 +1,16 @@
+{
+  "schema": "2.0",
+  "config": { "wide_screen_mode": true },
+  "header": {
+    "template": "{{ header_template }}",
+    "title": { "tag": "plain_text", "content": "{{ title if title else '通知' }}" }
+  },
+  "body": {
+    "elements": [
+      {
+        "tag": "markdown",
+        "content": "{{ summary }}"
+      }
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+id: agent.ack
+version: "1.0"
+description: "已收到指令 / 任务已开始"
+header_template: blue
+default_format: card
+default_identity: bot
+required_fields:
+  - summary
+optional_fields:
+  - status
+  - fields
+  - body_md
+  - actions
+  - artifacts
+text_template: shared/text.standard.md.j2
+card_template: shared/card.standard.json.j2

@@ -14,6 +14,8 @@ Monorepo of small **CLI tools** (each installable with **pipx**). Agent **Skills
 | Apple Health / Watch | `ahp`, `apple-health` | [`tools/apple-health-cli/`](tools/apple-health-cli/) | [README](tools/apple-health-cli/README.md) |
 | Xiaomi Mi Fitness | `mfp`, `mi-fitness` | [`tools/mi-fitness-cli/`](tools/mi-fitness-cli/) | [README](tools/mi-fitness-cli/README.md) |
 | Vehicle Restriction | `vehicle-restriction` | [`tools/vehicle-restriction-cli/`](tools/vehicle-restriction-cli/) | [README](tools/vehicle-restriction-cli/README.md) |
+| iOS app sync (iCTRL) | `ias`, `ictrl-app-sync` | [`tools/ictrl-app-sync/`](tools/ictrl-app-sync/) | [README](tools/ictrl-app-sync/README.zh.md) |
+| Agent Feishu outbound (FNP) | `fnotify`, `feishu-notify` | [`tools/feishu-notify-cli/`](tools/feishu-notify-cli/) | [README](tools/feishu-notify-cli/README.md) |
 
 **Install Garmin CLI** (from a clone):
 

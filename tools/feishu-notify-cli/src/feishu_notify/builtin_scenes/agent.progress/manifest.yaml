@@ -1,0 +1,17 @@
+id: agent.progress
+version: "1.0"
+description: "任务进展（默认卡片）"
+header_template: blue
+default_format: card
+default_identity: bot
+required_fields:
+  - title
+  - summary
+optional_fields:
+  - status
+  - fields
+  - body_md
+  - actions
+  - artifacts
+text_template: shared/text.standard.md.j2
+card_template: shared/card.standard.json.j2

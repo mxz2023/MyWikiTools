@@ -1,0 +1,18 @@
+{% if title and title != summary %}
+## {{ title }}
+
+{% endif %}
+{% if summary %}{{ summary }}
+
+{% endif %}
+{% if fields %}{% for f in fields %}- **{{ f.label }}**：{{ f.value }}
+{% endfor %}
+{% endif %}
+{% if body_md and body_md|length <= 4000 %}
+{{ body_md }}
+{% elif body_md %}
+（完整正文见后续附件消息。）
+{% endif %}
+{% if artifacts %}{% for a in artifacts %}{% if a.href %}- [{{ a.label or '链接' }}]({{ a.href }})
+{% elif a.path %}- 附件：`{{ a.path }}`
+{% endif %}{% endfor %}{% endif %}

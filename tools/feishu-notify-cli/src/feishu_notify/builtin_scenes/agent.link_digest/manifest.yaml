@@ -1,0 +1,17 @@
+id: agent.link_digest
+version: "1.0"
+description: "链接摘要"
+header_template: turquoise
+default_format: card
+default_identity: bot
+required_fields:
+  - title
+  - summary
+optional_fields:
+  - status
+  - fields
+  - body_md
+  - actions
+  - artifacts
+text_template: shared/text.standard.md.j2
+card_template: shared/card.with_actions.json.j2
