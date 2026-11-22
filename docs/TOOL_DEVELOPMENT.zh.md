@@ -23,4 +23,4 @@ git worktree list
 ./scripts/worktree-finish.sh <工具名>
 ```
 
-细则见 `.cursor/rules/tool-worktree-development.mdc`（合入 `develop` 后）及 `develop` 上的 `docs/TOOL_DEVELOPMENT.zh.md` 完整版。
+Cursor 规则在 **仓库根** `.cursor/rules/tool-worktree-development.mdc`（维护在 `develop`）；任意 `.worktrees/<工具>` worktree 打开后同样生效。工具 feature 分支勿长期独占规则改动，应合入 `develop` 后对全员 worktree 可见。
