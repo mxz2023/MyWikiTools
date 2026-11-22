@@ -1,18 +1,26 @@
 # 工具开发在哪里做？
 
-新工具与未评审改动 **不在 `master` 主工作区里直接开发**，请使用 **git worktree** + **`developer` 集成分支**。
+新工具在 **本仓库内** 的 **`.worktrees/<工具名>`** 开发，不要堆在 `develop` / `master` 主工作区根目录。
 
-## 快速查看
+## 位置与分支
+
+| 项 | 约定 |
+|----|------|
+| Worktree 路径 | `MyWikiTools/.worktrees/<工具名>`（仅此一处，不在 `Code/` 外并列建目录） |
+| 集成分支 | **`develop`**（PR 目标） |
+| 发布 | `develop` → `master` |
 
 ```bash
-cd /Users/gemini/Code/MyWikiTools && git worktree list
+git worktree list
+# …/MyWikiTools/.worktrees/ictrl-app-sync  [tool/ictrl-app-sync]
 ```
 
-## 当前登记示例
+## PR 合并后
 
-| Worktree | 分支 | 内容 |
-|----------|------|------|
-| `../MyWikiTools-worktrees/ictrl-app-sync` | `tool/ictrl-app-sync` | `ias` / `ictrl-app-sync` 工具 |
+合并到 **`develop`** 后 **删除** 对应 worktree：
 
-流程：**worktree 开发 → 评审 → 合并 `developer` → 稳定后合并 `master`**。  
-细则与脚手架命令见 worktree 内 `docs/TOOL_DEVELOPMENT.zh.md` 与 `.cursor/rules/tool-worktree-development.mdc`（随 `tool/*` 一并合入 `developer`）。
+```bash
+./scripts/worktree-finish.sh <工具名>
+```
+
+细则见 `.cursor/rules/tool-worktree-development.mdc`（合入 `develop` 后）及 `develop` 上的 `docs/TOOL_DEVELOPMENT.zh.md` 完整版。
