@@ -1,0 +1,16 @@
+---
+description: Monorepo CLI --help must be bilingual (EN/zh) like gmp; use help_text.py + --lang
+globs: tools/**/src/**/cli.py
+alwaysApply: false
+---
+
+# CLI `--help` 双语标准
+
+在 `tools/*-cli/` 内新增或修改 Typer CLI 时：
+
+1. 阅读并实现 [docs/cli-help-standard.md](../../docs/cli-help-standard.md)。
+2. 参考 **gmp**：`help_text.py`（`ROOT_HELP`、`EPILOG`、`OPT_*`、`CMD_*`）、`i18n.py`（`FNOTIFY_CLI_LANG` 等）、根 `Typer(help=ROOT_HELP, epilog=EPILOG)`、`@app.callback()` 的 `--lang both|en|zh`。
+3. 固定文案一律 **`English / 中文`** 同段（`--lang both` 默认）；不要把长 help 硬编码在 `cli.py`。
+4. 根 help 须含：Workflow、Defaults、Exit codes、Agent `--json-output` 提示。
+
+**fnotify** 为飞书工具的标准实现；新命令的 `help=` 与 `Option(help=...)` 必须走 `help_text`。
