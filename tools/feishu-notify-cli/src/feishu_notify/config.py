@@ -14,7 +14,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "max_body_chars": 12000,
     "progress": {
         "mode": "m2",
-        "hold_scene": "agent.progress",
+        "hold_scene": "agent.codex_reply",
         "require_run_id": True,
     },
     "routes": {
@@ -24,6 +24,27 @@ DEFAULT_CONFIG: dict[str, Any] = {
         },
     },
     "redact_patterns": [],
+    "bridge": {
+        "default_harness": "codex",
+        "workspace": "",
+        "agent_timeout_sec": 3600,
+        "notify": True,
+        "shell_cmd": 'echo "fnotify bridge (shell): {prompt}"',
+        "harnesses": {},
+        "codex": {
+            "executable": "",
+            "skip_git_repo_check": True,
+            "approve_for_me": True,
+            "json_events": True,
+            "thread_name": "Feishu Bot",
+            "model": "",
+            "profile": "",
+            "config_overrides": [],
+            "live_progress": True,
+            "progress_min_interval_sec": 2.5,
+            "progress_max_lines": 12,
+        },
+    },
 }
 
 
@@ -40,11 +61,30 @@ def load_config(path: Path | None = None) -> dict[str, Any]:
         return merged
     data = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
     merged = dict(DEFAULT_CONFIG)
-    merged.update({k: v for k, v in data.items() if k not in ("routes", "progress")})
+    merged.update(
+        {k: v for k, v in data.items() if k not in ("routes", "progress", "bridge")}
+    )
     progress = dict(DEFAULT_CONFIG.get("progress") or {})
     if isinstance(data.get("progress"), dict):
         progress.update(data["progress"])
     merged["progress"] = progress
+    bridge = dict(DEFAULT_CONFIG.get("bridge") or {})
+    if isinstance(data.get("bridge"), dict):
+        bridge.update({k: v for k, v in data["bridge"].items() if k not in ("harnesses", "codex")})
+        harnesses = dict(bridge.get("harnesses") or {})
+        if isinstance(data["bridge"].get("harnesses"), dict):
+            harnesses.update(data["bridge"]["harnesses"])
+        bridge["harnesses"] = harnesses
+        codex = dict(bridge.get("codex") or {})
+        if isinstance(data["bridge"].get("codex"), dict):
+            codex.update(data["bridge"]["codex"])
+        overrides = codex.get("config_overrides")
+        if not isinstance(overrides, list):
+            codex["config_overrides"] = list(
+                DEFAULT_CONFIG["bridge"]["codex"].get("config_overrides") or []
+            )
+        bridge["codex"] = codex
+    merged["bridge"] = bridge
     routes = dict(DEFAULT_CONFIG["routes"])
     if isinstance(data.get("routes"), dict):
         for name, route in data["routes"].items():

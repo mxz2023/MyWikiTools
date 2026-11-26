@@ -1,0 +1,17 @@
+{
+  "schema": "2.0",
+  "config": { "wide_screen_mode": true },
+  "header": {
+    "template": "{{ header_template }}",
+    "title": { "tag": "plain_text", "content": "{{ title }}" }{% if summary %},
+    "subtitle": { "tag": "plain_text", "content": {{ summary | tojson }} }{% endif %}
+  },
+  "body": {
+    "elements": [
+      {
+        "tag": "markdown",
+        "content": {{ body_md | tojson }}
+      }
+    ]
+  }
+}

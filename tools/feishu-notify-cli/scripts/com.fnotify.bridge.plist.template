@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.fnotify.bridge</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>@PYTHON@</string>
+    <string>-m</string>
+    <string>feishu_notify.cli</string>
+    <string>bridge</string>
+    <string>--workspace</string>
+    <string>@WORKSPACE@</string>
+    <string>--log</string>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PYTHONPATH</key>
+    <string>@PYTHONPATH@</string>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+@EXTRA_ENV_PLIST@
+  </dict>
+  <key>WorkingDirectory</key>
+  <string>@WORKSPACE@</string>
+  <key>KeepAlive</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>@HOME@/.config/fnotify/logs/bridge-daemon.log</string>
+  <key>StandardErrorPath</key>
+  <string>@HOME@/.config/fnotify/logs/bridge-daemon.log</string>
+  <key>RunAtLoad</key>
+  <true/>
+</dict>
+</plist>

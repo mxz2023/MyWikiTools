@@ -9,7 +9,7 @@
     "elements": [
       {
         "tag": "markdown",
-        "content": "**{{ summary }}**{% if fields %}\n\n{% for f in fields %}- **{{ f.label }}**：{{ f.value }}\n{% endfor %}{% endif %}{% if body_md and body_md|length <= 2000 %}\n\n{{ body_md }}{% elif body_md %}\n\n（完整正文将以附件发送。）{% endif %}"
+        "content": {{ card_markdown | tojson }}
       }
     ]
   }

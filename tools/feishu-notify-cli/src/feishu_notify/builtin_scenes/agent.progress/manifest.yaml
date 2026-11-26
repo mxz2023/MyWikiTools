@@ -14,4 +14,4 @@ optional_fields:
   - actions
   - artifacts
 text_template: shared/text.standard.md.j2
-card_template: shared/card.standard.json.j2
+card_template: card.progress.json.j2

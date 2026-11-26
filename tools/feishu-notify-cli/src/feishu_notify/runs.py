@@ -63,7 +63,7 @@ def get_binding(run_id: str, *, store_path: Path | None = None) -> RunBinding | 
         message_id=str(row["message_id"]),
         identity=str(row.get("identity") or "bot"),
         route=str(row.get("route") or "dm_self"),
-        scene=str(row.get("scene") or "agent.progress"),
+        scene=str(row.get("scene") or "agent.codex_reply"),
         updated_at=str(row.get("updated_at") or ""),
     )
 

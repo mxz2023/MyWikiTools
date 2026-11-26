@@ -22,7 +22,7 @@ def progress_cfg(cfg: dict[str, Any]) -> dict[str, Any]:
 
 
 def hold_scene(cfg: dict[str, Any]) -> str:
-    return str(progress_cfg(cfg).get("hold_scene") or "agent.progress")
+    return str(progress_cfg(cfg).get("hold_scene") or "agent.codex_reply")
 
 
 def m2_enabled(cfg: dict[str, Any]) -> bool:
