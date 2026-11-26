@@ -1,4 +1,4 @@
-from feishu_notify.listen_flow import (
+from feishu_notify.bridge.listen import (
     build_consume_argv,
     build_default_jq,
     parse_listen_timeout,

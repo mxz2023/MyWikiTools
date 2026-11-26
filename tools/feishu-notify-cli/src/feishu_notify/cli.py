@@ -28,16 +28,8 @@ from feishu_notify.render import render_message
 from feishu_notify.policy import resolve_format, resolve_identity
 from feishu_notify.scenes import describe_scene, list_scenes, load_manifest
 from feishu_notify.scenes_demo import run_scenes_demo
-from feishu_notify.listen_flow import ALL_INBOUND_EVENTS, run_listen
-from feishu_notify.codex_sessions import clear_thread, get_thread_id, list_sessions, session_key
-from feishu_notify.bridge_catchup import run_catch_up
-from feishu_notify.bridge_state import (
-    clear_all_in_flight,
-    clear_in_flight,
-    is_dispatched,
-    is_in_flight,
-)
-from feishu_notify.bridge_dispatch import (
+from feishu_notify.bridge.catchup import run_catch_up
+from feishu_notify.bridge.dispatch import (
     agent_timeout_sec,
     default_harness,
     default_workspace,
@@ -45,6 +37,14 @@ from feishu_notify.bridge_dispatch import (
     notify_enabled,
     run_dispatch,
 )
+from feishu_notify.bridge.listen import ALL_INBOUND_EVENTS, run_listen
+from feishu_notify.bridge.state import (
+    clear_all_in_flight,
+    clear_in_flight,
+    is_dispatched,
+    is_in_flight,
+)
+from feishu_notify.harnesses.codex import clear_thread, get_thread_id, list_sessions, session_key
 from feishu_notify.fnp import validate_payload_for_scene
 from feishu_notify.config import load_config as _load_config
 from feishu_notify.redact import redact_payload

@@ -1,4 +1,4 @@
-from feishu_notify.bridge_catchup import _has_conclusion_after, _is_ack_only
+from feishu_notify.bridge.catchup import _has_conclusion_after, _is_ack_only
 
 
 def test_is_ack_only():

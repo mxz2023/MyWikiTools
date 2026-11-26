@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from feishu_notify.bridge_dispatch import (
+from feishu_notify.bridge.dispatch import (
     build_harness_argv,
     event_to_prompt,
     make_run_id,

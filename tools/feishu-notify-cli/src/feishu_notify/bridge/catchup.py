@@ -6,15 +6,15 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from feishu_notify.bridge_dispatch import run_dispatch
-from feishu_notify.bridge_state import (
+from feishu_notify.bridge.dispatch import run_dispatch
+from feishu_notify.bridge.listen import dm_self_user_id
+from feishu_notify.bridge.state import (
     clear_in_flight,
     is_in_flight,
     load_dispatched_ids,
     mark_dispatched,
 )
 from feishu_notify.config import load_config
-from feishu_notify.listen_flow import dm_self_user_id
 
 # Avoid re-running Codex on pasted automation digests during catch-up.
 _MAX_CATCHUP_PROMPT_CHARS = 400

@@ -1,4 +1,4 @@
-from feishu_notify.codex_stream import CodexActivityFeed, describe_codex_event
+from feishu_notify.harnesses.codex import CodexActivityFeed, describe_codex_event
 
 
 def test_turn_started():
