@@ -1,10 +1,12 @@
 ---
-description: MyWikiTools 工具在主仓 .worktrees/ 开发，PR 合并 develop 后删除 worktree
+description: tools/ 下工具开发：worktree 路径、分支命名与测试范围
 globs: tools/**
-alwaysApply: true
+alwaysApply: false
 ---
 
 # 工具开发：`.worktrees/` + `develop`
+
+全仓分支闸门与「develop 验收 → master 发布」见 **`repo-development-workflow.mdc`** 与 **`docs/DEVELOPMENT_WORKFLOW.zh.md`**。
 
 ## 这份规则存在哪、何时生效
 

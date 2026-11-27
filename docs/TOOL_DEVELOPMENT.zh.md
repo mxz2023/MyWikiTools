@@ -1,5 +1,7 @@
 # 工具开发在哪里做？
 
+总流程（worktree → develop → 你验收 → master）见 **[DEVELOPMENT_WORKFLOW.zh.md](./DEVELOPMENT_WORKFLOW.zh.md)**。
+
 新工具在 **本仓库内** 的 **`.worktrees/<工具名>`** 开发，不要堆在 `develop` / `master` 主工作区根目录。
 
 ## 位置与分支
