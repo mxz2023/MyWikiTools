@@ -1,12 +1,17 @@
 from pathlib import Path
 
-from feishu_notify.codex_bridge import (
-    _parse_thread_id_from_jsonl,
+from feishu_notify.harnesses.codex.bridge import (
     _parse_agent_text_from_jsonl,
+    _parse_thread_id_from_jsonl,
     build_codex_argv,
     resolve_codex_executable,
 )
-from feishu_notify.codex_sessions import clear_thread, get_thread_id, put_thread_id, session_key
+from feishu_notify.harnesses.codex.sessions import (
+    clear_thread,
+    get_thread_id,
+    put_thread_id,
+    session_key,
+)
 
 
 def test_parse_thread_started():

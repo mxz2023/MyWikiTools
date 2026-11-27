@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from feishu_notify.codex_sessions import get_thread_id, put_thread_id, session_key
+from feishu_notify.harnesses.codex.sessions import get_thread_id, put_thread_id, session_key
 
 
 def bridge_config(cfg: dict[str, Any]) -> dict[str, Any]:

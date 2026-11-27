@@ -9,10 +9,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from feishu_notify.bridge_progress import FeishuCodexProgress, codex_live_progress_enabled
-from feishu_notify.bridge_state import clear_in_flight, mark_dispatched, mark_in_flight
+from feishu_notify.bridge.progress import FeishuCodexProgress, codex_live_progress_enabled
+from feishu_notify.bridge.state import clear_in_flight, mark_dispatched, mark_in_flight
 from feishu_notify.card_safe import card_safe_summary
-from feishu_notify.codex_bridge import run_codex_turn
+from feishu_notify.harnesses.codex import build_codex_argv, get_thread_id, run_codex_turn, session_key
+from feishu_notify.harnesses.cursor import build_cursor_argv
 from feishu_notify.config import load_config
 from feishu_notify.pipeline import process_send
 
@@ -128,23 +129,9 @@ def build_harness_argv(
     custom = harnesses.get(harness)
 
     if harness == "cursor":
-        exe = shutil.which("cursor") or "cursor"
-        return [
-            exe,
-            "agent",
-            "--print",
-            "--output-format",
-            "text",
-            "--force",
-            "--workspace",
-            str(workspace),
-            prompt,
-        ]
+        return build_cursor_argv(prompt=prompt, workspace=workspace)
 
     if harness == "codex":
-        from feishu_notify.codex_bridge import build_codex_argv
-        from feishu_notify.codex_sessions import get_thread_id, session_key
-
         dummy = workspace / ".fnotify-codex-last-msg"
         return build_codex_argv(
             prompt=prompt,
@@ -169,7 +156,8 @@ def build_harness_argv(
         return [_subst(str(part), ctx) for part in argv]
 
     raise ValueError(
-        f"unknown harness: {harness}; use cursor|codex|shell or bridge.harnesses.<name> in config"
+        f"unknown harness: {harness}; use cursor|codex|shell, "
+        "bridge.harnesses.<name>, or add under feishu_notify.harnesses/"
     )
 
 

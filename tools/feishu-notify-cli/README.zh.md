@@ -137,6 +137,6 @@ fnotify send --stdin --json-output
 ## 与双向遥控的关系
 
 - **出站（本工具）**：Agent → 飞书
-- **入站 Bridge**：`fnotify bridge` — 长连接 + 派发 **cursor / codex / 自定义 CLI**，回发 ack/结论卡
+- **入站 Bridge**：`fnotify bridge` — 长连接 + 派发 **cursor / codex / 自定义 CLI**，回发 ack/结论卡；编排与监听在 `src/feishu_notify/bridge/`（`listen`、`dispatch`、`catchup`、`state`、`progress`），Agent 实现放在 `src/feishu_notify/harnesses/<name>/`（如 `codex/`、`cursor/`），后续可增 `deepseek/` 等
 
 出站卡片上的 `callback` 按钮需 **bot** 身份；入站消费 `card.action.trigger` 与出站 `agent.approval` 共用 `run_id` / `trace_id` 约定见 FNP。

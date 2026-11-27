@@ -1,4 +1,4 @@
-from feishu_notify.bridge_progress import FeishuCodexProgress
+from feishu_notify.bridge.progress import FeishuCodexProgress
 
 
 def test_ack_title_includes_prompt():

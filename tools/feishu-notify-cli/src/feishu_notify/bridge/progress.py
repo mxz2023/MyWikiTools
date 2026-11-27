@@ -5,7 +5,7 @@ import time
 from typing import Any
 
 from feishu_notify.card_safe import card_safe_md, card_safe_summary
-from feishu_notify.codex_stream import CodexActivityFeed
+from feishu_notify.harnesses.codex import CodexActivityFeed
 from feishu_notify.config import load_config
 from feishu_notify.pipeline import process_send
 
