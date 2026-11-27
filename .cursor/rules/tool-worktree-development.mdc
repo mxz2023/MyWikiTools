@@ -1,0 +1,79 @@
+---
+description: MyWikiTools 工具在主仓 .worktrees/ 开发，PR 合并 develop 后删除 worktree
+globs: tools/**
+alwaysApply: true
+---
+
+# 工具开发：`.worktrees/` + `develop`
+
+## 这份规则存在哪、何时生效
+
+- Git 路径始终是 **仓库根** `.cursor/rules/tool-worktree-development.mdc`，**不是**每个 `.worktrees/<工具名>/` 各拷一份。
+- 每个 worktree 都是**整仓检出**：用 Cursor 打开 `MyWikiTools` 或 `MyWikiTools/.worktrees/新工具`，读的都是**当前分支**里的同一相对路径 `.cursor/rules/`。
+- 因此规则应 **合在 `develop`（并随发布进 `master`）**；`git worktree add … develop` 建的新工具目录会**自动带上**这份规则，无需为每个工具再写规则。
+
+## 原则
+
+- **`master`**：稳定、对外默认可用；不在主工作区直接堆新工具大块开发。
+- **`develop`**：集成分支；工具 PR **`tool/…` → `develop`**，评审通过后 merge。
+- **每个工具一条 feature 分支 + 主仓内一个 worktree**：路径固定为 **`<repo>/.worktrees/<工具名>`**。
+
+## 新建工具
+
+在仓库 **主 worktree**（任意已 checkout 的分支）执行：
+
+```bash
+git fetch origin
+git branch develop origin/develop 2>/dev/null || git branch develop master
+
+TOOL=ictrl-app-sync
+BRANCH="tool/${TOOL}"
+WT=".worktrees/${TOOL}"
+
+mkdir -p .worktrees
+git worktree add -b "$BRANCH" "$WT" develop
+```
+
+在 **`$WT` 内** 开发：`tools/${TOOL}/`、对应 `skills/`、测试与文档。  
+目录 **`.worktrees/`** 已加入 `.gitignore`，不会误提交 worktree 检出内容。
+
+## 日常
+
+| 步骤 | 操作 |
+|------|------|
+| 开发 | Cursor/终端打开 **`.worktrees/<工具名>`**，提交在 `tool/…` 分支 |
+| 自测 | worktree 内测试 |
+| PR | 推送 `tool/…`，开 PR → **`develop`** |
+| 合并后 | **必须** 删除该 worktree（见下） |
+| 发布 | `develop` 稳定后，`develop` → `master` |
+
+## PR 合并到 `develop` 之后（必做）
+
+在主 worktree、且已 `git fetch` 后：
+
+```bash
+./scripts/worktree-finish.sh <工具名>   # 例如 ictrl-app-sync
+```
+
+或手动：
+
+```bash
+git worktree remove .worktrees/<工具名>
+git branch -d tool/<工具名>              # 本地 feature 已合并时可删
+git fetch -p
+```
+
+**合并成功 = 代码已在 `develop` + worktree 目录已移除。** 不要长期留着已合并的 `.worktrees/*`。
+
+## 禁止
+
+- 不要在 `Code/` 外再建 `MyWikiTools-worktrees/` 等并列目录（统一用 **主仓 `.worktrees/`**）。
+- 不要跳过 **`develop`** 直接合进 **`master`**。
+- PR 合并后 **不要** 留着对应 `.worktrees/<工具名>` 不删。
+
+## 查看登记
+
+```bash
+git worktree list
+# …/MyWikiTools/.worktrees/ictrl-app-sync  [tool/ictrl-app-sync]
+```

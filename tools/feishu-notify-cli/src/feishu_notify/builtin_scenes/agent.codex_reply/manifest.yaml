@@ -1,0 +1,15 @@
+id: agent.codex_reply
+version: "1.0"
+description: "Bridge Codex 私聊 AI 回复卡（蓝=处理中 / 绿=完成）"
+header_template: blue
+default_format: card
+default_identity: bot
+required_fields:
+  - title
+  - summary
+optional_fields:
+  - status
+  - body_md
+  - header_template
+text_template: shared/text.standard.md.j2
+card_template: card.codex_reply.json.j2

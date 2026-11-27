@@ -13,7 +13,7 @@ from feishu_notify.scenes import list_scenes, load_manifest
 
 def test_list_scenes_has_twelve():
     scenes = list_scenes()
-    assert len(scenes) == 12
+    assert len(scenes) == 13
     ids = {s["id"] for s in scenes}
     assert "agent.progress" in ids
     assert next(s for s in scenes if s["id"] == "agent.progress")["default_format"] == "card"
@@ -40,6 +40,65 @@ def test_progress_defaults_to_card():
         }
     )
     assert resolve_format(env, manifest) == "card"
+
+
+def test_render_codex_reply_header_green_when_done():
+    env = validate_envelope(
+        {
+            "fnp_version": 1,
+            "scene": "agent.codex_reply",
+            "format": "card",
+            "payload": {
+                "title": "已收到「准备睡觉」",
+                "summary": "10s",
+                "status": "success",
+                "body_md": "_已用时 10s_\n\n- step\n\n---\n\n晚安",
+            },
+        }
+    )
+    out = render_message(env, "card")
+    assert out["card"]["header"]["template"] == "green"
+
+
+def test_render_codex_reply_card_markdown_only():
+    env = validate_envelope(
+        {
+            "fnp_version": 1,
+            "scene": "agent.codex_reply",
+            "format": "card",
+            "payload": {
+                "title": "已收到「hi」",
+                "summary": "3s · 1 步",
+                "status": "running",
+                "body_md": "- step",
+            },
+        }
+    )
+    out = render_message(env, "card")
+    tags = [e.get("tag") for e in out["card"]["body"]["elements"]]
+    assert tags == ["markdown"]
+
+
+def test_render_progress_card_multiline_body():
+    env = validate_envelope(
+        {
+            "fnp_version": 1,
+            "scene": "agent.progress",
+            "format": "card",
+            "payload": {
+                "title": "已收到 测试",
+                "summary": "⏳ Codex 处理中 · 5s",
+                "status": "running",
+                "body_md": "line1\nline2\n📥 已交给 Codex",
+            },
+        }
+    )
+    out = render_message(env, "card")
+    md_el = next(e for e in out["card"]["body"]["elements"] if e.get("tag") == "markdown")
+    content = md_el["content"]
+    assert "line1" in content
+    assert "line2" in content
+    assert "5 步" not in content or "line1" in content
 
 
 def test_render_conclusion_card():
@@ -112,7 +171,7 @@ def test_m2_second_progress_uses_patch(tmp_path: Path):
     store = tmp_path / "runs.json"
     cfg = tmp_path / "config.yaml"
     cfg.write_text(
-        "progress:\n  mode: m2\n  require_run_id: true\n",
+        "progress:\n  mode: m2\n  require_run_id: true\n  hold_scene: agent.codex_reply\n",
         encoding="utf-8",
     )
     put_binding(
@@ -121,7 +180,7 @@ def test_m2_second_progress_uses_patch(tmp_path: Path):
             message_id="om_test_binding",
             identity="bot",
             route="dm_self",
-            scene="agent.progress",
+            scene="agent.codex_reply",
             updated_at="",
         ),
         store_path=store,
@@ -129,7 +188,7 @@ def test_m2_second_progress_uses_patch(tmp_path: Path):
     body = process_send(
         {
             "fnp_version": 1,
-            "scene": "agent.progress",
+            "scene": "agent.codex_reply",
             "context": {"run_id": "run-1"},
             "payload": {"title": "T", "summary": "7/10"},
         },
@@ -144,14 +203,14 @@ def test_m2_second_progress_uses_patch(tmp_path: Path):
 def test_progress_requires_run_id_when_m2(tmp_path: Path):
     cfg = tmp_path / "config.yaml"
     cfg.write_text(
-        "progress:\n  mode: m2\n  require_run_id: true\n",
+        "progress:\n  mode: m2\n  require_run_id: true\n  hold_scene: agent.codex_reply\n",
         encoding="utf-8",
     )
     with pytest.raises(FnpValidationError, match="run_id"):
         process_send(
             {
                 "fnp_version": 1,
-                "scene": "agent.progress",
+                "scene": "agent.codex_reply",
                 "payload": {"title": "T", "summary": "x"},
             },
             dry_run=True,

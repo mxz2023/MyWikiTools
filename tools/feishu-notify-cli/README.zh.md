@@ -30,6 +30,19 @@ fnotify uninstall --yes                  # 清除本机 fnotify 配置
 
 `install` 在交互终端内按需引导 `lark-cli config init --new` 与 `auth login --domain im`，无需另开终端手工配 lark-cli。
 
+## Help 双语
+
+与 monorepo 内 `gmp` 一致（详见仓库根 `docs/cli-help-standard.md`）：
+
+- 默认 **`fnotify --lang both`**：`fnotify --help` 与各选项为 **英文 / 中文** 对照。
+- **`--lang en`** | **`--lang zh`**：仅一种语言。
+- 环境变量 **`FNOTIFY_CLI_LANG`**：`both` | `en` | `zh`。
+
+```bash
+fnotify --help
+fnotify send --help
+```
+
 ## 命令
 
 ```bash
@@ -124,6 +137,6 @@ fnotify send --stdin --json-output
 ## 与双向遥控的关系
 
 - **出站（本工具）**：Agent → 飞书
-- **入站（规划中）**：`im.message.receive_v1` + Cursor SDK 等 → 另一条 `fnotify bridge` 命令
+- **入站 Bridge**：`fnotify bridge` — 长连接 + 派发 **cursor / codex / 自定义 CLI**，回发 ack/结论卡
 
 出站卡片上的 `callback` 按钮需 **bot** 身份；入站消费 `card.action.trigger` 与出站 `agent.approval` 共用 `run_id` / `trace_id` 约定见 FNP。
