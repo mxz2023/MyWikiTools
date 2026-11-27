@@ -235,10 +235,11 @@ def _invoke_listen(
                     return
             preview = str(event.get("content") or event.get("action_value") or "")[:80]
             print(f"[bridge] 派发中… {preview!r}", file=sys.stderr, flush=True)
-            if harness_name == "codex":
+            if harness_name in ("codex", "cursor"):
+                label = "Cursor" if harness_name == "cursor" else "Codex"
                 print(
-                    "[bridge] Codex 运行中（通常 1–3 分钟），进度卡标题为「已收到 …」；"
-                    "结论在同一张卡底部更新，不另发文本",
+                    f"[bridge] {label} 运行中，进度卡标题为「已收到 …」；"
+                    "结论在同一张卡底部更新，不另发纯文本 ack",
                     file=sys.stderr,
                     flush=True,
                 )

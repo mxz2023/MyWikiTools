@@ -25,7 +25,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
     },
     "redact_patterns": [],
     "bridge": {
-        "default_harness": "codex",
+        "default_harness": "cursor",
         "workspace": "",
         "agent_timeout_sec": 3600,
         "notify": True,
@@ -40,6 +40,17 @@ DEFAULT_CONFIG: dict[str, Any] = {
             "model": "",
             "profile": "",
             "config_overrides": [],
+            "live_progress": True,
+            "progress_min_interval_sec": 2.5,
+            "progress_max_lines": 12,
+        },
+        "cursor": {
+            "executable": "",
+            "output_format": "stream-json",
+            "stream_partial_output": False,
+            "model": "",
+            "mode": "",
+            "session_label": "Feishu Bot",
             "live_progress": True,
             "progress_min_interval_sec": 2.5,
             "progress_max_lines": 12,
@@ -70,7 +81,13 @@ def load_config(path: Path | None = None) -> dict[str, Any]:
     merged["progress"] = progress
     bridge = dict(DEFAULT_CONFIG.get("bridge") or {})
     if isinstance(data.get("bridge"), dict):
-        bridge.update({k: v for k, v in data["bridge"].items() if k not in ("harnesses", "codex")})
+        bridge.update(
+            {
+                k: v
+                for k, v in data["bridge"].items()
+                if k not in ("harnesses", "codex", "cursor")
+            }
+        )
         harnesses = dict(bridge.get("harnesses") or {})
         if isinstance(data["bridge"].get("harnesses"), dict):
             harnesses.update(data["bridge"]["harnesses"])
@@ -84,6 +101,10 @@ def load_config(path: Path | None = None) -> dict[str, Any]:
                 DEFAULT_CONFIG["bridge"]["codex"].get("config_overrides") or []
             )
         bridge["codex"] = codex
+        cursor = dict(bridge.get("cursor") or DEFAULT_CONFIG["bridge"].get("cursor") or {})
+        if isinstance(data["bridge"].get("cursor"), dict):
+            cursor.update(data["bridge"]["cursor"])
+        bridge["cursor"] = cursor
     merged["bridge"] = bridge
     routes = dict(DEFAULT_CONFIG["routes"])
     if isinstance(data.get("routes"), dict):

@@ -25,6 +25,7 @@ def test_build_harness_cursor():
     assert "agent" in cmd
     assert cmd[-1] == "do x"
     assert "--workspace" in cmd
+    assert "--output-format" in cmd
 
 
 def test_build_harness_codex(tmp_path):

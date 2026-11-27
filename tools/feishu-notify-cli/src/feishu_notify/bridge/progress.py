@@ -5,8 +5,9 @@ import time
 from typing import Any
 
 from feishu_notify.card_safe import card_safe_md, card_safe_summary
-from feishu_notify.harnesses.codex import CodexActivityFeed
 from feishu_notify.config import load_config
+from feishu_notify.harnesses.codex import CodexActivityFeed
+from feishu_notify.harnesses.cursor import CursorActivityFeed
 from feishu_notify.pipeline import process_send
 
 
@@ -17,31 +18,46 @@ def _truncate_title(text: str, limit: int) -> str:
     return text[: limit - 1] + "…"
 
 
-def codex_progress_opts(cfg: dict[str, Any]) -> dict[str, Any]:
+def _harness_progress_opts(cfg: dict[str, Any], harness: str) -> dict[str, Any]:
     block = cfg.get("bridge") or {}
     if not isinstance(block, dict):
         return {}
-    raw = block.get("codex")
+    raw = block.get(harness)
     return raw if isinstance(raw, dict) else {}
 
 
+def codex_progress_opts(cfg: dict[str, Any]) -> dict[str, Any]:
+    return _harness_progress_opts(cfg, "codex")
+
+
+def cursor_progress_opts(cfg: dict[str, Any]) -> dict[str, Any]:
+    return _harness_progress_opts(cfg, "cursor")
+
+
 def codex_live_progress_enabled(cfg: dict[str, Any]) -> bool:
-    opts = codex_progress_opts(cfg)
+    return agent_live_progress_enabled(cfg, "codex")
+
+
+def agent_live_progress_enabled(cfg: dict[str, Any], harness: str) -> bool:
+    harness = (harness or "").strip().lower()
+    if harness not in ("codex", "cursor"):
+        return False
+    opts = _harness_progress_opts(cfg, harness)
     if "live_progress" in opts:
         return bool(opts.get("live_progress"))
     return True
 
 
-def _progress_interval(cfg: dict[str, Any]) -> float:
-    opts = codex_progress_opts(cfg)
+def _progress_interval(cfg: dict[str, Any], harness: str) -> float:
+    opts = _harness_progress_opts(cfg, harness)
     try:
         return max(1.0, float(opts.get("progress_min_interval_sec") or 2.5))
     except (TypeError, ValueError):
         return 2.5
 
 
-def _progress_max_lines(cfg: dict[str, Any]) -> int:
-    opts = codex_progress_opts(cfg)
+def _progress_max_lines(cfg: dict[str, Any], harness: str) -> int:
+    opts = _harness_progress_opts(cfg, harness)
     try:
         return max(4, int(opts.get("progress_max_lines") or 12))
     except (TypeError, ValueError):
@@ -49,7 +65,7 @@ def _progress_max_lines(cfg: dict[str, Any]) -> int:
 
 
 class FeishuCodexProgress:
-    """M2 agent.codex_reply card while Codex exec runs (patch in place)."""
+    """M2 agent.codex_reply card while Agent CLI runs (patch in place)."""
 
     def __init__(
         self,
@@ -62,10 +78,17 @@ class FeishuCodexProgress:
         self.run_id = run_id
         self.harness = harness
         self.cfg = cfg or load_config()
-        self.feed = CodexActivityFeed(max_lines=_progress_max_lines(self.cfg))
+        h = harness.strip().lower()
+        max_lines = _progress_max_lines(self.cfg, h)
+        if h == "cursor":
+            self.feed = CursorActivityFeed(max_lines=max_lines)
+            self._start_line = "📥 已交给 Cursor"
+        else:
+            self.feed = CodexActivityFeed(max_lines=max_lines)
+            self._start_line = "📥 已交给 Codex"
         self._started = time.monotonic()
         self._last_patch = 0.0
-        self._interval = _progress_interval(self.cfg)
+        self._interval = _progress_interval(self.cfg, h)
         self._prompt_text = prompt.strip()
         self._footer_md = ""
 
@@ -126,7 +149,7 @@ class FeishuCodexProgress:
             print(f"[bridge] progress patch failed: {exc}", file=sys.stderr, flush=True)
 
     def start(self) -> None:
-        self.feed.push("📥 已交给 Codex")
+        self.feed.push(self._start_line)
         self._patch(title=self._ack_title(), force=True)
 
     def on_jsonl_line(self, line: str) -> None:

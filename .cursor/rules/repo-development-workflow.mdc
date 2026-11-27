@@ -5,6 +5,18 @@ alwaysApply: true
 
 # 仓库开发流程：worktree → develop →（你验收）→ master
 
+## Agent 执行顺序（强制，不可跳过）
+
+收到**要写代码 / 改仓库文件 / 提交**类需求时，**第一步必须是 worktree**，再读代码、再编辑；**禁止**先在主仓 `MyWikiTools`（`develop`/`master` 检出根）里落盘改动，事后再补 worktree。
+
+1. **判断**：除「只回答问题、只读不改」外，一律按本流程。
+2. **检查**：`git worktree list`；是否已在 `.worktrees/<slug>` 且分支为 `tool/*`|`feature/*`|`fix/*`。
+3. **若主仓 develop 上开发**：立即 `git stash` → `git worktree add … origin/develop` → 在 worktree 里 `stash pop`；并提示用户用 Cursor **打开 worktree 目录**继续。
+4. **已在正确 worktree**：才允许改文件、跑测试、commit；合 develop 后用 `worktree-finish.sh`。
+5. **违反视为流程错误**：用户不必反复纠正；Agent 自行回滚主仓脏改动并迁入 worktree。
+
+仅当用户**明确**写「就在当前目录改、不要 worktree」时，才可例外，且须在回复里写明例外原因。
+
 ## 分支角色
 
 | 分支 | 用途 |
@@ -50,6 +62,7 @@ git worktree add -b "$BRANCH" "$WT" origin/develop
 
 ## 禁止
 
+- **Agent 在主仓根目录直接改功能代码**（含 `tools/`、`skills/`、`.cursor/rules/` 的流程性变更），未先建/进入 worktree。
 - 在 `Code/` 外并列建第二套 MyWikiTools 检出目录。
 - 跳过 **develop** 直推 **master**（除非你明确要求紧急发布并说明）。
 - PR 合并 develop 后 **长期保留** 已完成的 `.worktrees/<slug>`。

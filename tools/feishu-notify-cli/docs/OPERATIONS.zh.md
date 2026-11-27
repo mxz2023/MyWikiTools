@@ -166,22 +166,41 @@ fnotify listen --jq 'select(.message_type=="text") | .content'
 
 **前提**：飞书后台 **长连接** + 已订阅对应事件；卡片回调另需 **回调配置**。
 
-## Bridge：飞书 ↔ Codex（推荐）
+## Bridge：飞书 ↔ Cursor Agent（默认）
 
-默认 harness 已是 **codex**。同一 Bot 私聊的多条消息会 **续在同一个 Codex thread**（`codex exec resume <thread_id>`），在 Codex 客户端 / `codex agents` 里能看到完整对话。
+默认 harness 为 **cursor**（`cursor agent --print --output-format stream-json`）。同一会话多条私聊会 **续聊**（`~/.config/fnotify/cursor_sessions.json`，`cursor agent --resume <session_id>`）。
+
+**前提**：本机已 `cursor agent login` 或配置 `CURSOR_API_KEY`（与终端一致；launchd 请写到 `~/.config/fnotify/bridge.env`）。
 
 ```bash
 fnotify bridge --workspace ~/Code/MyWikiTools --log
-# 或显式
+# 仍用 Codex：
 fnotify bridge --harness codex --workspace ~/Code/MyWikiTools
 ```
 
-1. 飞书私聊发文字 → **M2 AI 回复卡** `agent.codex_reply`（标题 **已收到「你的原文」**；**蓝头=处理中 / 绿头=完成**；无单独 ack）  
-2. 同一张卡 **patch** 更新：正文为思考/工具步骤（副标题 `Ns · M 步`；无 loading 图）  
-3. 本机跑 `codex exec …`（首条新建 thread，之后 `resume`）  
-4. Codex 结束后 → 结论文本写在 **同一张进度卡底部**（标题仍为 **已收到「…」**；不另发一条纯文本）。关闭实时进度时仍走 **notify.plain** / conclusion 卡
+1. 飞书私聊发文字 → **M2 回复卡** `agent.codex_reply`（标题 **已收到「你的原文」**；蓝=处理中 / 绿=完成）  
+2. 同一张卡 patch：展示 Cursor 工具/assistant 步骤  
+3. 本机跑 Cursor Agent（首条新建 session，之后 resume）  
+4. 结束后结论在同一张卡底部；短回复可走纯文本
 
-关闭实时进度： `bridge.codex.live_progress: false`；调刷新间隔 `progress_min_interval_sec`（默认 2.5s）。
+配置片段（`~/.config/fnotify/config.yaml`）：
+
+```yaml
+bridge:
+  default_harness: cursor
+  workspace: ~/Code/MyWikiTools
+  cursor:
+    model: ""           # 可选，如 gpt-5
+    live_progress: true
+```
+
+关闭 Cursor 实时进度：`bridge.cursor.live_progress: false`。
+
+## Bridge：飞书 ↔ Codex
+
+Codex 仍可用：`bridge.default_harness: codex`。同一私聊续 **Codex thread**（`codex exec resume <thread_id>`）。
+
+关闭 Codex 实时进度：`bridge.codex.live_progress: false`。
 
 **后台常驻（推荐）**：用 macOS `launchd` 托管，进程崩溃会自动拉起，且**不依赖 Cursor/终端会话**（在 Agent 里 `nohup` 起的 bridge 常会随会话结束被杀掉）：
 

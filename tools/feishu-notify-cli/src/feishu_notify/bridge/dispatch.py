@@ -9,11 +9,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from feishu_notify.bridge.progress import FeishuCodexProgress, codex_live_progress_enabled
+from feishu_notify.bridge.progress import FeishuCodexProgress, agent_live_progress_enabled
 from feishu_notify.bridge.state import clear_in_flight, mark_dispatched, mark_in_flight
 from feishu_notify.card_safe import card_safe_summary
 from feishu_notify.harnesses.codex import build_codex_argv, get_thread_id, run_codex_turn, session_key
-from feishu_notify.harnesses.cursor import build_cursor_argv
+from feishu_notify.harnesses.cursor import build_cursor_argv, run_cursor_turn
 from feishu_notify.config import load_config
 from feishu_notify.pipeline import process_send
 
@@ -129,7 +129,12 @@ def build_harness_argv(
     custom = harnesses.get(harness)
 
     if harness == "cursor":
-        return build_cursor_argv(prompt=prompt, workspace=workspace)
+        return build_cursor_argv(
+            prompt=prompt,
+            workspace=workspace,
+            cfg=cfg,
+            chat_id=chat_id,
+        )
 
     if harness == "codex":
         dummy = workspace / ".fnotify-codex-last-msg"
@@ -215,14 +220,15 @@ def _log_feishu_send(envelope: dict[str, Any]) -> dict[str, Any] | None:
     return body
 
 
-def _send_codex_reply(
+def _send_agent_reply(
     text: str,
     *,
     harness: str,
     run_id: str,
-    thread_id: str | None,
+    session_ref: str | None,
     ok: bool,
     dry_run: bool,
+    resume_hint: str | None = None,
 ) -> None:
     if dry_run or not text.strip():
         return
@@ -239,16 +245,19 @@ def _send_codex_reply(
         _log_feishu_send(envelope)
         return
     fields: list[dict[str, str]] = []
-    if thread_id:
-        fields.append({"label": "Codex thread", "value": thread_id})
-        fields.append({"label": "续聊", "value": f"codex exec resume {thread_id}"})
+    if session_ref:
+        label = "Cursor session" if harness == "cursor" else "Codex thread"
+        fields.append({"label": label, "value": session_ref})
+        if resume_hint:
+            fields.append({"label": "续聊", "value": resume_hint})
+    title = "Cursor 回复" if harness == "cursor" else "Codex 回复"
     envelope = {
         "fnp_version": 1,
         "scene": "agent.conclusion",
         "route": "dm_self",
         "context": {"harness": harness, "run_id": run_id},
         "payload": {
-            "title": "Codex 回复",
+            "title": title,
             "summary": body[:480],
             "body_md": body,
             "status": "success" if ok else "failed",
@@ -256,6 +265,27 @@ def _send_codex_reply(
         },
     }
     _log_feishu_send(envelope)
+
+
+def _send_codex_reply(
+    text: str,
+    *,
+    harness: str,
+    run_id: str,
+    thread_id: str | None,
+    ok: bool,
+    dry_run: bool,
+) -> None:
+    hint = f"codex exec resume {thread_id}" if thread_id else None
+    _send_agent_reply(
+        text,
+        harness=harness,
+        run_id=run_id,
+        session_ref=thread_id,
+        ok=ok,
+        dry_run=dry_run,
+        resume_hint=hint,
+    )
 
 
 def _send_scene(
@@ -351,10 +381,8 @@ def run_dispatch(
             error=None,
         )
 
-    codex_live_progress = (
-        notify and harness == "codex" and codex_live_progress_enabled(cfg)
-    )
-    if notify and not codex_live_progress:
+    live_progress = notify and agent_live_progress_enabled(cfg, harness)
+    if notify and not live_progress:
         _send_scene(
             "agent.ack",
             harness=harness,
@@ -368,17 +396,18 @@ def run_dispatch(
         mark_in_flight(message_id)
 
     codex_thread_id: str | None = None
-    codex_progress: FeishuCodexProgress | None = None
+    cursor_session_id: str | None = None
+    agent_progress: FeishuCodexProgress | None = None
     try:
         if harness == "codex":
-            if codex_live_progress:
-                codex_progress = FeishuCodexProgress(
+            if live_progress:
+                agent_progress = FeishuCodexProgress(
                     run_id=run_id,
                     harness=harness,
                     prompt=prompt,
                     cfg=cfg,
                 )
-                codex_progress.start()
+                agent_progress.start()
             turn = run_codex_turn(
                 prompt=prompt,
                 workspace=workspace,
@@ -387,10 +416,10 @@ def run_dispatch(
                 timeout_sec=timeout_sec,
                 dry_run=False,
                 on_jsonl_line=(
-                    codex_progress.on_jsonl_line if codex_progress else None
+                    agent_progress.on_jsonl_line if agent_progress else None
                 ),
                 progress_heartbeat=(
-                    codex_progress.heartbeat if codex_progress else None
+                    agent_progress.heartbeat if agent_progress else None
                 ),
             )
             codex_thread_id = turn.thread_id
@@ -400,8 +429,43 @@ def run_dispatch(
             exit_code = turn.exit_code
             if turn.error and not output:
                 output = turn.error
-            if codex_progress:
-                codex_progress.finish(
+            if agent_progress:
+                agent_progress.finish(
+                    ok=ok,
+                    reply=output if ok else (output or turn.error),
+                )
+        elif harness == "cursor":
+            if live_progress:
+                agent_progress = FeishuCodexProgress(
+                    run_id=run_id,
+                    harness=harness,
+                    prompt=prompt,
+                    cfg=cfg,
+                )
+                agent_progress.start()
+            turn = run_cursor_turn(
+                prompt=prompt,
+                workspace=workspace,
+                chat_id=chat_id,
+                cfg=cfg,
+                timeout_sec=timeout_sec,
+                dry_run=False,
+                on_jsonl_line=(
+                    agent_progress.on_jsonl_line if agent_progress else None
+                ),
+                progress_heartbeat=(
+                    agent_progress.heartbeat if agent_progress else None
+                ),
+            )
+            cursor_session_id = turn.session_id
+            output = turn.output
+            ok = turn.ok
+            cmd = turn.cmd
+            exit_code = turn.exit_code
+            if turn.error and not output:
+                output = turn.error
+            if agent_progress:
+                agent_progress.finish(
                     ok=ok,
                     reply=output if ok else (output or turn.error),
                 )
@@ -422,8 +486,8 @@ def run_dispatch(
             exit_code = int(proc.returncode or 0)
     except subprocess.TimeoutExpired:
         if notify:
-            if codex_progress:
-                codex_progress.finish(
+            if agent_progress:
+                agent_progress.finish(
                     ok=False,
                     reply=f"Agent 超过 {timeout_sec}s 未完成",
                 )
@@ -475,24 +539,32 @@ def run_dispatch(
         )
 
     if notify:
-        if harness == "codex":
-            if codex_progress:
+        if harness in ("codex", "cursor"):
+            if agent_progress:
                 pass
             elif ok:
-                _send_codex_reply(
+                session = codex_thread_id if harness == "codex" else cursor_session_id
+                resume = None
+                if harness == "codex" and codex_thread_id:
+                    resume = f"codex exec resume {codex_thread_id}"
+                elif harness == "cursor" and cursor_session_id:
+                    resume = f"cursor agent --resume {cursor_session_id}"
+                _send_agent_reply(
                     output or "(无输出)",
                     harness=harness,
                     run_id=run_id,
-                    thread_id=codex_thread_id,
+                    session_ref=session,
                     ok=True,
                     dry_run=False,
+                    resume_hint=resume,
                 )
             else:
+                title = "Cursor 失败" if harness == "cursor" else "Codex 失败"
                 _send_scene(
                     "agent.failure",
                     harness=harness,
                     run_id=run_id,
-                    title="Codex 失败",
+                    title=title,
                     summary=_truncate(output or "未知错误", 800),
                     status="failed",
                 )
